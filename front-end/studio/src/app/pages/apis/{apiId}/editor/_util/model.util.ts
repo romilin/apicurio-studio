@@ -169,13 +169,8 @@ export class ExampleGenerator {
             console.info("[ExampleGenerator] Schema has properties.");
             Object.keys(schema.properties).forEach( propertyName => {
                 console.info("[ExampleGenerator] Processing schema property named: ", propertyName);
-                let example = schema.properties[propertyName].example;
-               if (example) {
-                   object[propertyName] = example;
-               } else {
-                   let propertyExample: any = this.generate(schema.properties[propertyName] as OasSchema);
-                   object[propertyName] = propertyExample;
-               }
+                let propertyExample: any = this.generate(schema.properties[propertyName] as OasSchema);
+                object[propertyName] = propertyExample;
             });
         }
         return object;
@@ -255,8 +250,8 @@ export class ExampleGenerator {
         if (schema.multipleOf) {
             number = this.closestMultiple(number, schema.multipleOf, schema.minimum, schema.maximum);
         }
-    }
         return number;
+    }
 
     private closestMultiple(number: number, multipleOf: number, min: number, max: number): number {
         if (multipleOf > number && number != 0) {
