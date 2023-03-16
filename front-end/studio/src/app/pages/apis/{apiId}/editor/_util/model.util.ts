@@ -136,7 +136,7 @@ export class ExampleGenerator {
             object = this.generateEnumValue(schema);
         } else if (this.isSimpleType(schema.type)) {
             console.info("[ExampleGenerator] Schema is a simple type.");
-            object = this.generateSimpleType(schema.type, schema.format);
+            object = this.generateSimpleType(schema);
         } else if (schema.type === "object" || !schema.type) {
             console.info("[ExampleGenerator] Schema is type 'object'");
             object = this.generateObject(schema);
@@ -169,8 +169,13 @@ export class ExampleGenerator {
             console.info("[ExampleGenerator] Schema has properties.");
             Object.keys(schema.properties).forEach( propertyName => {
                 console.info("[ExampleGenerator] Processing schema property named: ", propertyName);
-                let propertyExample: any = this.generate(schema.properties[propertyName] as OasSchema);
-                object[propertyName] = propertyExample;
+                let example = schema.properties[propertyName].example;
+               if (example) {
+                   object[propertyName] = example;
+               } else {
+                   let propertyExample: any = this.generate(schema.properties[propertyName] as OasSchema);
+                   object[propertyName] = propertyExample;
+               }
             });
         }
         return object;
@@ -204,10 +209,10 @@ export class ExampleGenerator {
         return "??";
     }
 
-    private generateSimpleType(type: string, format: string): any {
-        let key: string = type;
-        if (format) {
-            key = type + "_" + format;
+    private generateSimpleType(schema: OasSchema | AaiSchema): any {
+        let key: string = schema.type;
+        if (schema.format) {
+            key = schema.type + "_" + schema.format;
         }
         switch (key) {
             case "string":
@@ -225,7 +230,11 @@ export class ExampleGenerator {
             case "integer":
             case "integer_int32":
             case "integer_int64":
-                return Math.floor(Math.random() * Math.floor(100));
+                if (schema.minimum && schema.maximum) {
+                    return Math.floor(Math.random() * (schema.maximum - schema.minimum + 1) + schema.minimum);
+                } else {
+                    return Math.floor(Math.random() * Math.floor(100));
+                }
             case "number":
             case "number_float":
             case "number_double":
