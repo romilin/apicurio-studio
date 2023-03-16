@@ -230,11 +230,7 @@ export class ExampleGenerator {
             case "integer":
             case "integer_int32":
             case "integer_int64":
-                if (schema.minimum && schema.maximum) {
-                    return Math.floor(Math.random() * (schema.maximum - schema.minimum + 1) + schema.minimum);
-                } else {
-                    return Math.floor(Math.random() * Math.floor(100));
-                }
+                return this.generateExampleInteger(schema);
             case "number":
             case "number_float":
             case "number_double":
@@ -244,6 +240,38 @@ export class ExampleGenerator {
             default:
                 return "";
         }
+    }
+
+    private generateExampleInteger(schema: OasSchema | AaiSchema): number {
+        let number: number;
+        if (schema.maximum) {
+            number = Math.floor(Math.random() * (schema.maximum - schema.minimum + 1) + schema.minimum);
+        }
+        else if (schema.minimum && schema.maximum == 0) {
+            number = Math.floor(Math.random() * Math.floor(100) + schema.minimum);
+        } else {
+            number = Math.floor(Math.random() * Math.floor(100));
+        }
+        if (schema.multipleOf) {
+            number = this.closestMultiple(number, schema.multipleOf, schema.minimum, schema.maximum);
+        }
+    }
+        return number;
+
+    private closestMultiple(number: number, multipleOf: number, min: number, max: number): number {
+        if (multipleOf > number && number != 0) {
+            number = multipleOf;
+        } else {
+            number = number + multipleOf / 2;
+            number = number - (number % multipleOf);
+        }
+        if (number > max) {
+            number = number - multipleOf;
+        }
+        if (number < min) {
+            number = number + multipleOf;
+        }
+        return number;
     }
 
 }
