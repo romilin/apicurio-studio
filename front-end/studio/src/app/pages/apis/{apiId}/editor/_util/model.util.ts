@@ -228,7 +228,7 @@ export class ExampleGenerator {
         }
         switch (key) {
             case "string":
-                return "some text";
+                return this.generateExampleString(schema);
             case "string_date":
                 return "2018-01-17";
             case "string_date-time":
@@ -267,8 +267,8 @@ export class ExampleGenerator {
         if (schema.multipleOf) {
             number = this.closestMultiple(number, schema.multipleOf, schema.minimum, schema.maximum);
         }
-    }
         return number;
+    }
 
     private closestMultiple(number: number, multipleOf: number, min: number, max: number): number {
         if (multipleOf > number && number != 0) {
@@ -284,6 +284,16 @@ export class ExampleGenerator {
             number = number + multipleOf;
         }
         return number;
+    }
+
+    private generateExampleString(schema: OasSchema | AaiSchema) : string {
+        let text = "";
+        while (text.length < schema.maxLength) {
+            text = text + Math.random().toString(36).slice(2);
+        }
+        let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
+        text = text.slice(2, randomLength);
+         return text;
     }
 
 }
