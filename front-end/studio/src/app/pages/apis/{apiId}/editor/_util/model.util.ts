@@ -288,12 +288,24 @@ export class ExampleGenerator {
 
     private generateExampleString(schema: OasSchema | AaiSchema) : string {
         let text = "";
-        while (text.length < schema.maxLength) {
+        let maxLength;
+        let minLength;
+        if (schema.maxLength) {
+            maxLength = schema.maxLength;
+        } else {
+            maxLength = 25;
+        }
+        if (schema.minLength) {
+            minLength = schema.minLength;
+        } else {
+            minLength = 0;
+        }
+        while (text.length < maxLength) {
             text = text + Math.random().toString(36).slice(2);
         }
-        let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
+        let randomLength = Math.floor(Math.random() * (maxLength - minLength + 1) + minLength) + 2;
         text = text.slice(2, randomLength);
-         return text;
+        return text;
     }
 
     private generateExamplePassword(schema: OasSchema | AaiSchema) : string {
