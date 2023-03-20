@@ -211,13 +211,13 @@ export class ExampleGenerator {
         }
         switch (key) {
             case "string":
-                return "some text";
+                return this.generateExampleString(schema);
             case "string_date":
                 return "2018-01-17";
             case "string_date-time":
                 return "2018-02-10T09:30Z";
             case "string_password":
-                return "**********";
+                return this.generateExamplePassword(schema);
             case "string_byte":
                 return "R28gUGF0cyE=";
             case "string_binary":
@@ -231,7 +231,7 @@ export class ExampleGenerator {
             case "number_double":
                 return Math.floor((Math.random() * 100) * 100) / 100;
             case "boolean":
-                return true;
+                return this.generateExampleBoolean();
             default:
                 return "";
         }
@@ -267,6 +267,34 @@ export class ExampleGenerator {
             number = number + multipleOf;
         }
         return number;
+    }
+
+    private generateExampleString(schema: OasSchema | AaiSchema) : string {
+        let text = "";
+        while (text.length < schema.maxLength) {
+            text = text + Math.random().toString(36).slice(2);
+        }
+        let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
+        text = text.slice(2, randomLength);
+         return text;
+    }
+
+    private generateExamplePassword(schema: OasSchema | AaiSchema) : string {
+        let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
+        let password = "";
+        while (password.length < randomLength) {
+            password = password + "*";
+        }
+        return password;
+    }
+
+    private generateExampleBoolean() : boolean {
+        let random = Math.random();
+        if (random > 0.5) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
