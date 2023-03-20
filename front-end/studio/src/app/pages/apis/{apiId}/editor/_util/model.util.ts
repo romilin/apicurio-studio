@@ -234,7 +234,7 @@ export class ExampleGenerator {
             case "string_date-time":
                 return "2018-02-10T09:30Z";
             case "string_password":
-                return "**********";
+                return this.generateExamplePassword(schema);
             case "string_byte":
                 return "R28gUGF0cyE=";
             case "string_binary":
@@ -294,6 +294,15 @@ export class ExampleGenerator {
         let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
         text = text.slice(2, randomLength);
          return text;
+    }
+
+    private generateExamplePassword(schema: OasSchema | AaiSchema) : string {
+        let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
+        let password = "";
+        while (password.length < randomLength) {
+            password = password + "*";
+        }
+        return password;
     }
 
 }
