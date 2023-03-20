@@ -248,7 +248,7 @@ export class ExampleGenerator {
             case "number_double":
                 return Math.floor((Math.random() * 100) * 100) / 100;
             case "boolean":
-                return true;
+                return this.generateExampleBoolean();
             default:
                 return "";
         }
@@ -303,6 +303,15 @@ export class ExampleGenerator {
             password = password + "*";
         }
         return password;
+    }
+
+    private generateExampleBoolean() : boolean {
+        let random = Math.random();
+        if (random > 0.5) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
