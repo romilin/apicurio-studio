@@ -116,7 +116,16 @@ export class ModelUtils {
      */
     public static generateExampleFromSchema(schema: OasSchema | AaiSchema): any {
         let generator: ExampleGenerator = new ExampleGenerator();
-        return generator.generate(schema);
+        let example : any[] = [];
+        example.push(generator.generate(schema));
+        if (schema.allOf) {
+            schema.allOf.forEach( inherited => {
+                if (inherited.$ref) {
+                    example.push(generator.generate(inherited));
+                }
+            });
+        }
+        return example;
     }
 
 }
@@ -163,14 +172,22 @@ export class ExampleGenerator {
         }
     }
 
+    /**
+     * Generates an exemple if no example exist
+    **/
     private generateObject(schema: OasSchema | AaiSchema): any {
         let object: any = {};
         if (schema.properties) {
             console.info("[ExampleGenerator] Schema has properties.");
             Object.keys(schema.properties).forEach( propertyName => {
                 console.info("[ExampleGenerator] Processing schema property named: ", propertyName);
-                let propertyExample: any = this.generate(schema.properties[propertyName] as OasSchema);
-                object[propertyName] = propertyExample;
+                let example = schema.properties[propertyName].example;
+               if (example) {
+                   object[propertyName] = example;
+               } else {
+                   let propertyExample: any = this.generate(schema.properties[propertyName] as OasSchema);
+                   object[propertyName] = propertyExample;
+               }
             });
         }
         return object;
