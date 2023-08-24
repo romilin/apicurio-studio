@@ -288,10 +288,16 @@ export class ExampleGenerator {
 
     private generateExampleString(schema: OasSchema | AaiSchema) : string {
         let text = "";
-        while (text.length < schema.maxLength) {
+        let maxLength = schema.maxLength;
+
+        if (maxLength == null) {
+            maxLength = Math.floor(Math.random() * 10);
+        }
+
+        while (text.length < maxLength) {
             text = text + Math.random().toString(36).slice(2);
         }
-        let randomLength = Math.floor(Math.random() * (schema.maxLength - schema.minLength + 1) + schema.minLength) + 2;
+        let randomLength = Math.floor(Math.random() * (maxLength - schema.minLength + 1) + schema.minLength) + 2;
         text = text.slice(2, randomLength);
          return text;
     }
