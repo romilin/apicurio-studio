@@ -197,7 +197,7 @@ export class EditorMasterComponent extends AbstractBaseComponent {
     }
 
     /**
-     * Returns an array of paths that match the filter criteria and are sorted alphabetically.
+     * Returns an array of paths that match the filter criteria and are sorted alphabetically or not.
      */
     public paths(): OasPathItem[] {
         let viz: FindPathItemsVisitor = new FindPathItemsVisitor(this.filterCriteria);
@@ -250,7 +250,7 @@ export class EditorMasterComponent extends AbstractBaseComponent {
     }
 
     /**
-     * Returns an array of responses filtered by the search criteria and sorted.
+     * Returns an array of responses filtered by the search criteria and sorted or not.
      */
     public responses(): (Oas20ResponseDefinition | Oas30ResponseDefinition)[] {
         let viz: FindResponseDefinitionsVisitor = new FindResponseDefinitionsVisitor(this.filterCriteria);
